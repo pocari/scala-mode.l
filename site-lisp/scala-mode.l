@@ -154,6 +154,8 @@
   (setq mode-name "Scala")
   (make-local-variable 'build-summary-function)
   (setq build-summary-function 'scala-build-summary-of-functions)
+  (make-local-variable 'indent-tabs-mode)
+  (setq indent-tabs-mode nil)
   (make-local-variable 'mode-specific-indent-command)
   (setq mode-specific-indent-command #'scala-indent-line)
   (use-keymap *scala-mode-map*)
