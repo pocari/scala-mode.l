@@ -107,15 +107,18 @@
   (setq ed::*scala-indent-tabs-mode* t)
   (set-tab-columns 8)
   (ed::scala-mode))
-  
+
 (defun setup-scala-mode ()
   (cond ((eq *test-scala-mode-indent-mode* 'space)
-	 (scala-mode-with-indent-by-space))
-	((eq *test-scala-mode-indent-mode* 'tab)
-	 (scala-mode-with-indent-by-tab))
-	(t
-	 (error "unknown indent-mode"))))
-	 
+         (scala-mode-with-indent-by-space))
+        ((eq *test-scala-mode-indent-mode* 'tab)
+         (scala-mode-with-indent-by-tab))
+        (t
+         (error "unknown indent-mode"))))
+
+(defun ntabs (tabnum)
+  (* (tab-columns) tabnum))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (test-start "scala-mode")
@@ -265,27 +268,27 @@
                 #'equal)
 
 (test-on-buffer "scala-indentation-from-following(3)(indent:tab)"
-                8
+                (ntabs 1)
                 '("\t{\n"
                   "_|_}")
                 #'ed::scala-indentation-from-following
                 #'equal)
 
 (test-on-buffer "scala-indentation-from-following(4)(indent:tab)"
-                8
+                (ntabs 1)
                 '("_|_\telse ")
                 #'ed::scala-indentation-from-following
                 #'equal)
 
 (test-on-buffer "scala-indentation-from-following(5)(indent:tab)"
-                8
+                (ntabs 1)
                 '("\tif // if\n"
                   "_|_else")
                 #'ed::scala-indentation-from-following
                 #'equal)
 
 (test-on-buffer "scala-indentation-from-following(6)(indent:tab)"
-                8
+                (ntabs 1)
                 '("\telse if\n"
                   "_|_else")
                 #'ed::scala-indentation-from-following
@@ -390,7 +393,7 @@
                 #'equal)
 
 (test-on-buffer "scala-indentation-from-preceding(2)(indent:tab)"
-                16
+                (ntabs 2)
                 '("\t(\n"
                   "_|_")
                 #'ed::scala-indentation-from-preceding
@@ -404,7 +407,7 @@
                 #'equal)
 
 (test-on-buffer "scala-indentation-from-preceding(4)(indent:tab)"
-                24
+                (ntabs 3)
                 '("\t\tfor ( )\n"
                   "_|_")
                 #'ed::scala-indentation-from-preceding
@@ -434,7 +437,7 @@
                 #'equal)
 
 (test-on-buffer "scala-indentation-from-preceding(8)(indent:tab)"
-                8
+                (ntabs 1)
                 '("aaa.bbb(\n"
                   "_|_")
                 #'ed::scala-indentation-from-preceding
@@ -448,14 +451,14 @@
                 #'equal)
 
 (test-on-buffer "scala-indentation-from-preceding(10)(indent:tab)"
-                8
+                (ntabs 1)
                 '("aaa.bbb {\n"
                   "_|_")
                 #'ed::scala-indentation-from-preceding
                 #'equal)
 
 (test-on-buffer "scala-indentation-from-preceding(11)(indent:tab)"
-                8
+                (ntabs 1)
                 '("aaa.bbb { ccc =>\n"
                   "_|_")
                 #'ed::scala-indentation-from-preceding
@@ -600,7 +603,7 @@
                 #'equal)
 
 (test-on-buffer "scala-indentation-from-block(2)(indent:tab)"
-                16
+                (ntabs 2)
                 '("\t{{}_|_")
                 #'ed::scala-indentation-from-block
                 #'equal)
@@ -716,10 +719,10 @@
 (test-section "command-execute(indent:tab)")
 (test-on-buffer
  "command-execute(1)(indent:tab)"
- '("    /*\n"
-   "     * _|_")
+ '("\t/*\n"
+   "\t * _|_")
  '()
- (cmd-execute "    /*\n"))
+ (cmd-execute "\t\t/*\n")) ; second "\t" means to insert a tab before "/*".
 
 (test-on-buffer
  "command-execute(2)(indent:tab)"
